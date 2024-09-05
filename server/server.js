@@ -41,9 +41,20 @@ function validate(entry, length) {
  *******************/
 app.get('/messages', async (req, res) => {
     /** @type {Result} */
-    const dbRes = await pool.query("SELECT id, name, message FROM guestbook");
-    console.log(dbRes);
-    res.json(dbRes.rows)
+    pool.query("SELECT id, name, message FROM guestbook").then(result => {
+        if (result.rowCount > 0) {
+            const filtered = result.rows.map((entry) => {
+                return {
+                    name: entry.name,
+                    message: entry.message
+                }
+            })
+            res.json(filtered);
+        } else {
+            res.json({})
+        }
+
+    });
 })
 
 app.post("/messages", async (req, res) => {
