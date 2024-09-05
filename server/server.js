@@ -26,7 +26,6 @@ const pool = new pg.Pool({
 })
 
 
-
 /*******************
  EXPRESS ROUTES
  *******************/
@@ -43,16 +42,18 @@ function validate(entry, length) {
 }
 
 /*******************
-   EXPRESS ROUTES
+ EXPRESS ROUTES
  *******************/
 app.get('/messages', async (req, res) => {
     /** @type {Result} */
-    pool.query("SELECT id, name, message FROM guestbook").then(result => {
+    pool.query("SELECT id, name, message, time FROM guestbook").then(result => {
         if (result.rowCount > 0) {
             const filtered = result.rows.map((entry) => {
                 return {
+                    id: entry.id,
                     name: entry.name,
-                    message: entry.message
+                    message: entry.message,
+                    time: entry.time
                 }
             })
             res.json(filtered);
@@ -76,15 +77,25 @@ app.post("/messages", async (req, res) => {
         return;
     }
 
-    pool.query("INSERT INTO guestbook (name, email, message) VALUES ($1, $2, $3)", [name, email, message]).then((result) => {
+    pool.query("INSERT INTO guestbook (id, name, email, message) VALUES (DEFAULT, $1, $2, $3) RETURNING id, name, message, time", [name, email, message]).then((result) => {
         if (result.rowCount > 0) {
             res.json({success: true})
-            wss.getWss().clients.forEach((client) => {
-                console.log(client.readyState)
-                if (client.readyState === 1) {
-                    client.send(JSON.stringify({name: name, message: message}))
-                }
-                console.log(client);
+            // We only expect 1 row
+            result.rows.forEach((entry) => {
+                wss.getWss().clients.forEach((client) => {
+                    console.log(client.readyState)
+                    if (client.readyState === 1) {
+
+                        client.send(JSON.stringify(
+                            {
+                                id: entry.id,
+                                name: entry.name,
+                                message: entry.message,
+                                time: entry.time
+                            }
+                        ))
+                    }
+                })
             })
 
         } else {
@@ -95,7 +106,7 @@ app.post("/messages", async (req, res) => {
 
 })
 
-app.ws('/ws', function(ws, req) {
+app.ws('/ws', function (ws, req) {
     console.log(arguments)
 })
 

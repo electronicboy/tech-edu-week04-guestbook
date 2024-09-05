@@ -72,6 +72,8 @@ formElement.addEventListener('submit', (event) => {
                 }
             })
         }
+    }).catch((err) => {
+        addError(formElement, "An error occurred sending your message")
     })
 })
 
