@@ -1,4 +1,4 @@
-const API_URL = location.href.includes("localhost") ? "http://localhost:8081" : "api_url"
+const API_URL = location.href.includes("localhost") ? "http://localhost:8081" : "https://cat-tech-edu-week04-guestbook.onrender.com"
 
 
 const comments = document.getElementById('comments');
@@ -69,6 +69,3 @@ function updateMessages() {
 }
 
 updateMessages()
-
-console.log(fetchMessages().then(val => {
-}));

@@ -59,6 +59,7 @@ app.get('/messages', async (req, res) => {
 
 app.post("/messages", async (req, res) => {
     const name = req.body.name;
+    const email = req.body.email || null;
     const message = req.body.message;
     if (!validate(name, 64)) {
         res.status(400).json({message: "Invalid name", success: false}).end();
@@ -69,7 +70,7 @@ app.post("/messages", async (req, res) => {
         return;
     }
 
-    pool.query("INSERT INTO guestbook (name, message) VALUES ($1, $2)", [name, message]).then((result) => {
+    pool.query("INSERT INTO guestbook (name, email, message) VALUES ($1, $2, $3)", [name, email, message]).then((result) => {
         if (result.rowCount > 0) {
             res.json({success: true})
         } else {
