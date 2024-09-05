@@ -2,14 +2,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import expressws from 'express-ws';
-import WebSocket from 'node:stream/web';
 import pg from 'pg';
 
 // Setup environment
 dotenv.config();
 
 const port = process.env.PORT || 8080;
-const WS_HOST = process.env.WS_HOST || null;
 
 // Woo
 const app = express();
@@ -77,13 +75,13 @@ app.post("/messages", async (req, res) => {
         return;
     }
 
+    // noinspection SqlInsertIntoGeneratedColumn - We're inserting DEFAULT into the id, so, this is fine.
     pool.query("INSERT INTO guestbook (id, name, email, message) VALUES (DEFAULT, $1, $2, $3) RETURNING id, name, message, time", [name, email, message]).then((result) => {
         if (result.rowCount > 0) {
             res.json({success: true})
             // We only expect 1 row
             result.rows.forEach((entry) => {
                 wss.getWss().clients.forEach((client) => {
-                    console.log(client.readyState)
                     if (client.readyState === 1) {
 
                         client.send(JSON.stringify(
@@ -107,17 +105,9 @@ app.post("/messages", async (req, res) => {
 })
 
 app.ws('/ws', function (ws, req) {
-    console.log(arguments)
 })
 
-/**
- *
- */
-function handleWS(ws, msg) {
-
-}
-
 app.listen(port, () => {
-    console.log(`Server is now running on http://localhost:${port}`);
+    console.log(`Server is now running on http://0.0.0.0:${port}`);
 })
 

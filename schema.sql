@@ -6,5 +6,5 @@ create table guestbook
     name    VARCHAR(256),
     email VARCHAR(320),
     message TEXT,
-    time TIME DEFAULT now()
+    time TIMESTAMP DEFAULT now()
 )
