@@ -1,14 +1,19 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import expressws from 'express-ws';
+import WebSocket from 'node:stream/web';
 import pg from 'pg';
 
 // Setup environment
 dotenv.config();
+
 const port = process.env.PORT || 8080;
+const WS_HOST = process.env.WS_HOST || null;
 
 // Woo
 const app = express();
+const wss = expressws(app); // This is a function that adds ws() to express
 
 // Middleware
 app.use(cors());
@@ -19,6 +24,7 @@ app.use(express.json());
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
 })
+
 
 
 /*******************
@@ -73,6 +79,14 @@ app.post("/messages", async (req, res) => {
     pool.query("INSERT INTO guestbook (name, email, message) VALUES ($1, $2, $3)", [name, email, message]).then((result) => {
         if (result.rowCount > 0) {
             res.json({success: true})
+            wss.getWss().clients.forEach((client) => {
+                console.log(client.readyState)
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify({name: name, message: message}))
+                }
+                console.log(client);
+            })
+
         } else {
             res.status(500).json({success: false})
             console.log("An error occurred inserting into the database", result)
@@ -81,6 +95,18 @@ app.post("/messages", async (req, res) => {
 
 })
 
+app.ws('/ws', function(ws, req) {
+    console.log(arguments)
+})
+
+/**
+ *
+ */
+function handleWS(ws, msg) {
+
+}
+
 app.listen(port, () => {
     console.log(`Server is now running on http://localhost:${port}`);
 })
+

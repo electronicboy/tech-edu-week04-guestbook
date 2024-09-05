@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="app.js" type="module"></script>
+    <script src="app.js" type="module" defer></script>
     <link rel="stylesheet" href="style.css">
     <title>GuestBook</title>
 </head>
@@ -16,10 +16,10 @@
     </div>
 </header>
 <div class="container">
-    <form>
+    <form id="comment-form">
         <div class="form-row">
             <label for="name">Name</label>
-            <input id="name" name="name" minlength="3" maxlength="64" required>
+            <input id="name" name="name" minlength="3" maxlength="80" required>
         </div>
         <div class="form-row">
             <label for="email">Email<span title="Email address is optional, but required to support deleting">*</span>:</label>
@@ -31,6 +31,9 @@
         </div>
         <div class="form-row">
             <button>Submit</button>
+        </div>
+        <div class="form-error" style="display: none">
+
         </div>
     </form>
 </div>
