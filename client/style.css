@@ -16,5 +16,37 @@ header {
     min-width: 100vw;
     color: white;
     font-size: 2rem;
-    padding-left: 2rem;
+    padding: 1rem 2rem;
+}
+
+.container {
+    background-color: aliceblue;
+    font-weight: 400;
+    padding: 2rem 3rem 0 3rem;
+}
+
+.form-row > * {
+    display: block;
+    margin-top: 0.4rem;
+}
+
+.form-row > textarea {
+    min-height: 6rem;
+}
+
+.form-row label {
+    font-weight: 500;
+}
+
+input, textarea {
+    /* Yoinked these two from the iOS safari UA sheet in order to correct some display issues*/
+    padding-block-start: 2px;
+    padding-inline-start: 0.5em;
+    border: solid darkgray;
+    padding: 0.3rem;
+    width: 100%;
+}
+
+input:focus, textarea:focus {
+    border: solid darkgray;
 }

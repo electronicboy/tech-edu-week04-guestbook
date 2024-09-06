@@ -1,4 +1,5 @@
-const API_URL = location.href.includes("localhost") ? "http://localhost:8081" : "https://cat-tech-edu-week04-guestbook.onrender.com"
+const API_URL = location.href.includes("localhost") ? "http://localhost:8081" :
+    location.href.includes("192.168.200.12") ? "http://192.168.200.12:8081": "https://cat-tech-edu-week04-guestbook.onrender.com"
 const WSS_URL = "ws" + API_URL.slice(4) + "/ws";
 console.log(WSS_URL)
 const ws = new WebSocket(WSS_URL)
@@ -46,6 +47,9 @@ function generateCommentBody(comment) {
     nameElement.classList.add('comment-entry-name');
     nameElement.textContent = comment.name;
     container.appendChild(nameElement);
+
+    const seperatorElement = document.createElement('hr')
+    container.appendChild(seperatorElement)
 
     const messageElement = document.createElement('p')
     messageElement.classList.add('comment-entry-message');
