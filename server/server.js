@@ -45,14 +45,15 @@ function validate(entry, length) {
  *******************/
 app.get('/messages', async (req, res) => {
     /** @type {Result} */
-    pool.query("SELECT id, name, message, time FROM guestbook").then(result => {
+    pool.query("SELECT id, name, message, time, email FROM guestbook").then(result => {
         if (result.rowCount > 0) {
             const filtered = result.rows.map((entry) => {
                 return {
                     id: entry.id,
                     name: entry.name,
                     message: entry.message,
-                    time: entry.time
+                    time: entry.time,
+                    hasEmail: entry.email ? true : false
                 }
             })
             res.json(filtered);
@@ -77,7 +78,7 @@ app.post("/messages", async (req, res) => {
     }
 
     // noinspection SqlInsertIntoGeneratedColumn - We're inserting DEFAULT into the id, so, this is fine.
-    pool.query("INSERT INTO guestbook (id, name, email, message) VALUES (DEFAULT, $1, $2, $3) RETURNING id, name, message, time", [name, email, message]).then((result) => {
+    pool.query("INSERT INTO guestbook (id, name, email, message) VALUES (DEFAULT, $1, $2, $3) RETURNING id, name, email, message, time", [name, email, message]).then((result) => {
         if (result.rowCount > 0) {
             res.json({success: true})
             // We only expect 1 row
@@ -90,7 +91,8 @@ app.post("/messages", async (req, res) => {
                                 id: entry.id,
                                 name: entry.name,
                                 message: entry.message,
-                                time: entry.time
+                                time: entry.time,
+                                hasEmail: entry.email ? true : false
                             }
                         ))
                     }
