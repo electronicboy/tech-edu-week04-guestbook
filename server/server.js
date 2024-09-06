@@ -2,6 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import expressws from 'express-ws';
+import escapeHtml from 'escape-html';
 import pg from 'pg';
 
 // Setup environment
@@ -65,7 +66,7 @@ app.get('/messages', async (req, res) => {
 app.post("/messages", async (req, res) => {
     const name = req.body.name;
     const email = req.body.email || null;
-    const message = req.body.message;
+    const message = escapeHtml(req.body.message);
     if (!validate(name, 64)) {
         res.status(400).json({message: "Invalid name", success: false}).end();
         return;
