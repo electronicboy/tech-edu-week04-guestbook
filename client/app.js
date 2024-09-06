@@ -45,6 +45,7 @@ function generateCommentBody(comment) {
 
     const nameElement = document.createElement('span')
     nameElement.classList.add('comment-entry-name');
+    nameElement.classList.add('comment-entry-holder');
     nameElement.textContent = comment.name;
     container.appendChild(nameElement);
 
@@ -53,6 +54,7 @@ function generateCommentBody(comment) {
 
     const messageElement = document.createElement('p')
     messageElement.classList.add('comment-entry-message');
+    messageElement.classList.add('comment-entry-holder')
     messageElement.textContent = comment.message;
     container.appendChild(messageElement);
 
@@ -112,7 +114,7 @@ function updateMessages() {
 
         response.json().then((resolved) => {
             resolved.forEach(comment => {
-                comments.appendChild(generateCommentBody(comment))
+                comments.prepend(generateCommentBody(comment))
             })
         })
     })
@@ -124,6 +126,6 @@ function updateMessages() {
 // tracking to ensure that we avoid duplicates and dealing with then in a cordial manner, etc.
 updateMessages().then(() => {
     ws.onmessage = (event) => {
-        comments.appendChild(generateCommentBody(JSON.parse(event.data)));
+        comments.prepend(generateCommentBody(JSON.parse(event.data)));
     }
 })

@@ -25,6 +25,9 @@ header {
     padding: 2rem 3rem 0 3rem;
 }
 
+.form-row {
+    position: relative;
+}
 .form-row > * {
     display: block;
     margin-top: 0.4rem;
@@ -36,6 +39,18 @@ header {
 
 .form-row label {
     font-weight: 500;
+}
+.form-row button {
+    position: absolute;
+    right: 0.3rem;
+    left: auto;
+}
+
+.form-error {
+    background-color: red;
+    color: white;
+    padding: 0.2rem;
+    margin-top: 0.2rem;
 }
 
 input, textarea {
@@ -49,4 +64,14 @@ input, textarea {
 
 input:focus, textarea:focus {
     border: solid darkgray;
+}
+
+.comment-entry {
+    background-color: #dcf4ff;
+    margin: 1rem 0;
+    padding: 0.3rem;
+}
+.comment-entry-holder {
+    padding: 0.2rem;
+
 }
