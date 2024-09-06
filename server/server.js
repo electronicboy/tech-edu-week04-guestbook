@@ -64,8 +64,8 @@ app.get('/messages', async (req, res) => {
 })
 
 app.post("/messages", async (req, res) => {
-    const name = req.body.name;
-    const email = req.body.email || null;
+    const name = escapeHtml(req.body.name);
+    const email = req.body.email ? escapeHtml(req.body.email) : null;
     const message = escapeHtml(req.body.message);
     if (!validate(name, 64)) {
         res.status(400).json({message: "Invalid name", success: false}).end();
