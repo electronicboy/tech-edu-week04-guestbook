@@ -102,10 +102,13 @@ input:focus, textarea:focus {
 .comment-entry-header {
     display: flex;
     justify-content: space-between;
+}
+
+.comment-entry-name {
     font-weight: 600;
 }
 
-.comment-entry-delete {
+.interaction {
     text-decoration: none;
 }
 

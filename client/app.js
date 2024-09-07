@@ -13,15 +13,24 @@ const commentElements = [];
 
 /**
  *
- * @returns {Promise<Response>} response with messages
+
  */
-function fetchMessages() {
-    return fetch(`${API_URL}/messages`)
-}
+
 
 const API = {
+
     /**
-     * @return {Promise<Response>}
+     * Fetches messages from the API server
+     * @returns {Promise<Response>} response with messages
+     */
+    fetchMessages: () => {
+        return fetch(`${API_URL}/messages`)
+    },
+
+    /**
+     * Sends a request to delete a message from the server
+     *
+     * @returns {Promise<Response>}
      * @param id the id of the comment to remove
      */
     deleteComment: (id) => {
@@ -33,9 +42,10 @@ const API = {
         })
     },
     /**
+     * Sends a message to the server
      *
      * @param formData
-     * @return {Promise<Response>}
+     * @returns {Promise<Response>}
      */
     sendMessage: (formData) => {
         return fetch(`${API_URL}/messages`, {
@@ -45,14 +55,20 @@ const API = {
             },
             body: JSON.stringify(formData)
         })
+    },
+
+    addLike: (commendID, clientID) => {
+        fetch(`${API_URL}/messages/${commendID}/like`, {
+            method: "POST",
+        })
     }
 }
 
 /**
  * Generate the HTML element for a comment
  *
- * @param comment {{id:number, name: string, message:string}}
- * @return {HTMLDivElement}
+ * @param comment {{id:number, name: string, message:string, likes:number}}
+ * @returns {HTMLDivElement}
  */
 function generateCommentBody(comment) {
     const container = document.createElement('div');
@@ -61,13 +77,32 @@ function generateCommentBody(comment) {
     const commentEntryHeader = document.createElement('div');
     commentEntryHeader.classList.add('comment-entry-header');
 
+    const headerLeader = document.createElement("comment-entry-header-leader")
+
     const nameElement = document.createElement('span')
     nameElement.classList.add('comment-entry-name');
     nameElement.classList.add('comment-entry-holder');
     nameElement.textContent = comment.name;
+    headerLeader.append(nameElement);
+
+
+    const likeElement = document.createElement('a')
+    likeElement.classList.add('interaction');
+    likeElement.classList.add('comment-entry-like');
+    likeElement.href = "#"
+    likeElement.textContent = "+" + (comment.likes ? comment.likes : "0")
+    likeElement.addEventListener('click', () => {
+        API.addLike(comment.id)
+    })
+
+    headerLeader.appendChild(likeElement)
+
+    commentEntryHeader.appendChild(headerLeader);
+
 
     const deleteElement = document.createElement('a')
     deleteElement.classList.add('comment-entry-delete');
+    deleteElement.classList.add('interaction');
     deleteElement.textContent = "␥"
     deleteElement.href = "#"
     deleteElement.addEventListener('click', (e) => {
@@ -83,13 +118,14 @@ function generateCommentBody(comment) {
                     if (responseBody.message) {
                         alert(responseBody.message);
                     }
-                }).catch(error => {})
+                }).catch(error => {
+                })
             }
         })
 
     })
 
-    commentEntryHeader.appendChild(nameElement);
+
     commentEntryHeader.appendChild(deleteElement);
 
     container.appendChild(commentEntryHeader);
@@ -113,7 +149,8 @@ formElement.addEventListener('submit', (event) => {
         if (res.status === 200) {
             // If we have the WS, then we don't need to manually update
             if (ws.readyState !== WebSocket.OPEN) {
-                updateMessages()
+                updateMessages().then(() => {
+                })
             }
             formElement.reset()
         } else {
@@ -147,9 +184,8 @@ function addError(formElement, error) {
 
 
 function updateMessages() {
-    return fetchMessages().then((response) => {
+    return API.fetchMessages().then((response) => {
         commandsContainer.innerHTML = ''
-        // TODO: We can probably clean this up a bit
         if (response.status !== 200) {
             const error = document.createElement('div')
             error.textContent = "Failed to update comments";
@@ -180,6 +216,21 @@ function deleteComment(commentId) {
     }
 }
 
+function updateComment(comment) {
+    let commentElement = commentElements[comment.id];
+    if (commentElement) {
+        if (comment.likes) {
+            let elementsByClassName = commentElement.getElementsByClassName("comment-entry-like");
+            for (let i = 0; i < elementsByClassName.length; i++) {
+                elementsByClassName[i].textContent = "+" + (comment.likes || 0)
+
+            }
+        }
+    }
+
+}
+
+
 // After the initial hit, enable the WS. This does have a risk of losing some
 // messages, but, the only real way to deal with this better would likely involve
 // purely relying on the WS for fetching comments or having some form of "seen" message
@@ -193,6 +244,10 @@ updateMessages().then(() => {
                 break;
             case "delete":
                 deleteComment(eventJSON.id);
+                break;
+            case "update":
+                updateComment(eventJSON)
+                break;
 
         }
 

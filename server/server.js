@@ -45,7 +45,7 @@ function validate(entry, length) {
  *******************/
 app.get('/messages', async (req, res) => {
     /** @type {Result} */
-    pool.query("SELECT id, name, message, time, email FROM guestbook").then(result => {
+    pool.query("SELECT id, name, message, time, email, likes FROM guestbook").then(result => {
         if (result.rowCount > 0) {
             const filtered = result.rows.map((entry) => {
                 return {
@@ -53,6 +53,7 @@ app.get('/messages', async (req, res) => {
                     name: entry.name,
                     message: entry.message,
                     time: entry.time,
+                    likes: entry.likes,
                     hasEmail: entry.email ? true : false
                 }
             })
@@ -124,6 +125,37 @@ app.delete("/messages/delete/:id", (req, res) => {
         }
     })
 })
+
+app.post("/messages/:id/like", (req, res) => {
+    const commentID = req.params.id;
+    pool.query("UPDATE guestbook SET likes = likes + 1 WHERE ID = $1 RETURNING id, likes", [commentID]).then((result) => {
+        if (result.rowCount > 0) {
+            result.rows.forEach((entry) => {
+
+                postSocket({
+                    action: "update",
+                    id: entry.id,
+                    likes: entry.likes
+                })
+            })
+            res.json({success: true})
+        } else {
+            res.status(404).json({success: false, message: "Comment did not exist"});
+        }
+    })
+
+})
+
+
+/**
+ *
+ * @param data {{action: string, id: number}}
+ */
+function postSocket(data) {
+    wss.getWss().clients.forEach((client) => {
+        client.send(JSON.stringify(data))
+    })
+}
 
 app.ws('/ws', function (ws, req) {
 })
