@@ -1,1 +1,4 @@
 GET http://localhost:8081/messages
+
+###
+DELETE http://localhost:8081/messages/delete/21

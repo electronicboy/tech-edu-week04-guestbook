@@ -26,7 +26,7 @@ const pool = new pg.Pool({
 
 
 /*******************
- EXPRESS ROUTES
+ Util
  *******************/
 
 function validate(entry, length) {
@@ -88,6 +88,7 @@ app.post("/messages", async (req, res) => {
 
                         client.send(JSON.stringify(
                             {
+                                action: "add",
                                 id: entry.id,
                                 name: entry.name,
                                 message: entry.message,
@@ -105,6 +106,23 @@ app.post("/messages", async (req, res) => {
         }
     })
 
+})
+
+app.delete("/messages/delete/:id", (req, res) => {
+    pool.query("DELETE FROM guestbook WHERE id = $1", [req.params.id])
+    .then((result) => {
+        if (result.rowCount > 0) {
+            res.json({success: true})
+            wss.getWss().clients.forEach((client) => {
+                client.send(JSON.stringify({
+                    action: "delete",
+                    id: req.params.id
+                }))
+            })
+        } else {
+            res.status(404).json({success: false, message: "Comment did not exist"})
+        }
+    })
 })
 
 app.ws('/ws', function (ws, req) {

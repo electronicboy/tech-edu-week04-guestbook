@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,7 +7,7 @@
 }
 
 body {
-    background-color: aliceblue;
+    font-family: "Roboto", sans-serif;
 }
 
 header {
@@ -24,14 +26,30 @@ header {
 }
 
 .container {
-    background-color: aliceblue;
+    background-color: white;
+    max-width: 500px;
     font-weight: 400;
-    padding: 2rem 3rem 0 3rem;
+
+    /* Align centrally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+/******
+ FORM
+ ******/
+form {
+    padding: 1rem 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 385px;
 }
 
 .form-row {
     position: relative;
 }
+
 .form-row > * {
     display: block;
     margin-top: 0.4rem;
@@ -42,12 +60,11 @@ header {
 }
 
 .form-row label {
-    font-weight: 500;
+    font-weight: 400;
 }
-.form-row button {
-    position: absolute;
-    right: 0.3rem;
-    left: auto;
+
+.form-row-button {
+    text-align: center;
 }
 
 .form-error {
@@ -69,23 +86,56 @@ input, textarea {
 input:focus, textarea:focus {
     border: solid darkgray;
 }
+/*******
+ COMMENTS
+ *******/
 
 .comment-entry {
-    background-color: #dcf4ff;
     margin: 1rem 0;
     padding: 0.3rem;
+    font-weight: 400;
+    font-size: 0.9rem;
+    /*border: 1px solid darkgray;*/
+    /*border-radius: 0.5rem;*/
 }
+
+.comment-entry-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.comment-entry-delete {
+    text-decoration: none;
+}
+
 .comment-entry-holder {
     padding: 0.2rem;
 
 }
+
+
+
+/************
+    FOOTER
+ ************/
 footer {
     text-align: center;
 }
 
-@media (min-width: 500px) {
+/************
+    MEDIA
+ ************/
+
+@media (min-width: 600px) {
     .container {
         max-width: 500px;
-        margin: auto;
+
+    }
+
+    form {
+        border: 1px solid black;
+        border-radius: 0.5rem;
+        box-shadow: 3px 3px darkgray;
     }
 }
