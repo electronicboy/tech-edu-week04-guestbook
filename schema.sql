@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS guestbook
 (
     id      INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name    VARCHAR(256),
-    email VARCHAR(320),
+    email   VARCHAR(320),
     message TEXT,
-    time TIMESTAMP DEFAULT now(),
-    likes INT DEFAULT 0
+    time    TIMESTAMP DEFAULT now(),
+    likes   INT       DEFAULT 0
 );
 
 -- ALTER TABLE guestbook ADD likes INT DEFAULT 0;
