@@ -126,6 +126,11 @@ app.delete("/messages/delete/:id", (req, res) => {
     })
 })
 
+// Okay, so, usually, we'd have some way to identify the client in order to avoid duplication, allow unliking, etc.
+// To do this properly, we'd need some form of client ID. We could rely on local storage, however, for the purposes
+// of this toy, we'll just leave this open, as much as that is not advised...
+// We'd still likely want to maintain the likes counter manually to avoid the cost of calculating a total count for a comment,
+// but, we would generally store these inside of a seperate table for the sake of tracking and avoiding duplicates.
 app.post("/messages/:id/like", (req, res) => {
     const commentID = req.params.id;
     pool.query("UPDATE guestbook SET likes = likes + 1 WHERE ID = $1 RETURNING id, likes", [commentID]).then((result) => {

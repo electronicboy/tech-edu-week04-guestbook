@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS guestbook
     likes INT DEFAULT 0
 );
 
-ALTER TABLE guestbook ADD likes INT DEFAULT 0;
+-- ALTER TABLE guestbook ADD likes INT DEFAULT 0;
 
 -- CREATE TABLE IF NOT EXISTS guestbook_likes (
 --     command_id INT REFERENCES guestbook (id),
